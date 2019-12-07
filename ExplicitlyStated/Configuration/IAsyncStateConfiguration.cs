@@ -6,12 +6,11 @@ namespace ExplicitlyStated.Configuration
     public interface IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent>
         where TSpecificState : TMachineState
     {
-        IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> RunAsync<TCompletionEvent>(Func<TSpecificState, Task<TCompletionEvent>> action)
-            where TCompletionEvent : TMachineEvent;
+        IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> RunAsync(Func<TSpecificState, Task<TMachineEvent>> action);
 
-        IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnLeave(Action<TSpecificState> onLeave);
+        IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnLeave(Action<TSpecificState> onLeave);
 
-        IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(
+        IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(
             Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ExplicitlyStated.StateMachine.Impl
+﻿using System.Threading.Tasks;
+
+namespace ExplicitlyStated.StateMachine.Impl
 {
     internal enum EnteredStateType
     {
@@ -10,7 +12,7 @@
     {
         bool TryTransition(TMachineState state, TMachineEvent ev, out TMachineState newState);
 
-        EnteredStateType OnEnter(TMachineState state);
+        EnteredStateType OnEnter(TMachineState state, out Task<TMachineEvent> asyncEvent);
 
         void OnLeave(TMachineState state);
     }

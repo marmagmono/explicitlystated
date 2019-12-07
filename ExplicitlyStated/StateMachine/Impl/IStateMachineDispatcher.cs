@@ -2,6 +2,6 @@
 {
     internal interface IStateMachineDispatcher<TMachineState, TMachineEvent>
     {
-        IStateDispatcher<TMachineState, TMachineEvent> ResolveStateDispatcher(TMachineState state);
+        IStateDispatcher<TMachineState, TMachineEvent> FindStateDispatcher(TMachineState state);
     }
 }
