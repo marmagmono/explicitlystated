@@ -1,8 +1,8 @@
 ﻿using ExplicitlyStated.Configuration;
 
-namespace ExplicitlyStated.StateMachine.Impl
+namespace ExplicitlyStated.StateMachine.Dispatch
 {
-    class AsyncStateMachineDispatcher<TMachineState, TMachineEvent>
+    internal class AsyncStateMachineDispatcher<TMachineState, TMachineEvent>
         : StateMachineDispatcher<TMachineState, TMachineEvent>,
           IAsyncStateMachineConfiguration<TMachineState, TMachineEvent>
     {

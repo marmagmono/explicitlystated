@@ -2,31 +2,37 @@
 using System.Threading.Tasks;
 using ExplicitlyStated.Configuration;
 
-namespace ExplicitlyStated.StateMachine.Impl
+namespace ExplicitlyStated.StateMachine.Dispatch
 {
-    internal class AsyncStateDispatcher<TSpecificState, TMachineState, TMachineEvent>
-        : IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent>,
+    internal class StateDispatcher<TSpecificState, TMachineState, TMachineEvent>
+        : IStateConfiguration<TSpecificState, TMachineState, TMachineEvent>,
           IStateDispatcher<TMachineState, TMachineEvent>
         where TSpecificState : TMachineState
     {
         private delegate TMachineState TransitionFunction(TMachineState state, TMachineEvent e);
-        
+
         private SimpleDispatch<TransitionFunction> dispatch;
-        private Func<TSpecificState, Task<TMachineEvent>> stateAction;
+        private Action<TSpecificState> onEnter;
         private Action<TSpecificState> onLeave;
 
-        public AsyncStateDispatcher(int numHandledEvents)
+        public StateDispatcher(int numHandledEvents)
         {
             this.dispatch = new SimpleDispatch<TransitionFunction>(numHandledEvents);
         }
 
-        public IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> RunAsync(Func<TSpecificState, Task<TMachineEvent>> action)
+        public IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnEnter(Action<TSpecificState> onEnter)
         {
-            this.stateAction = action;
+            this.onEnter = onEnter;
             return this;
         }
 
-        public IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction)
+        public IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnLeave(Action<TSpecificState> onLeave)
+        {
+            this.onLeave = onLeave;
+            return this;
+        }
+
+        public IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction)
         {
             this.dispatch.AddEntry(new SimpleDispatchEntry<TransitionFunction>(
                 typeof(TSpecificEvent),
@@ -44,10 +50,16 @@ namespace ExplicitlyStated.StateMachine.Impl
             return this;
         }
 
-        public IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnLeave(Action<TSpecificState> onLeave)
+        public virtual EnteredStateType OnEnter(TMachineState state, out Task<TMachineEvent> asyncEvent)
         {
-            this.onLeave = onLeave;
-            return this;
+            this.onEnter?.Invoke((TSpecificState)state);
+            asyncEvent = null;
+            return EnteredStateType.Normal;
+        }
+
+        public void OnLeave(TMachineState state)
+        {
+            this.onLeave?.Invoke((TSpecificState)state);
         }
 
         public bool TryTransition(TMachineState state, TMachineEvent ev, out TMachineState newState)
@@ -60,17 +72,6 @@ namespace ExplicitlyStated.StateMachine.Impl
             }
             newState = state;
             return false;
-        }
-
-        public EnteredStateType OnEnter(TMachineState state, out Task<TMachineEvent> asyncEvent)
-        {
-            asyncEvent = this.stateAction((TSpecificState)state);
-            return EnteredStateType.Async;
-        }
-
-        public void OnLeave(TMachineState state)
-        {
-            this.onLeave?.Invoke((TSpecificState)state);
         }
     }
 }

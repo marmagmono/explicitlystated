@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExplicitlyStated.StateMachine.Impl
+namespace ExplicitlyStated.StateMachine.Dispatch
 {
     public delegate TMachineState TryMatchDelegate<TMachineState, TMachineEvent>(TMachineState s, TMachineEvent e);
 

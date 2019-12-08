@@ -1,8 +1,7 @@
 ﻿using System;
 using ExplicitlyStated.Configuration;
-using ExplicitlyStated.Dispatch;
 
-namespace ExplicitlyStated.StateMachine.Impl
+namespace ExplicitlyStated.StateMachine.Dispatch
 {
     internal class StateMachineDispatcher<TMachineState, TMachineEvent>
         : IStateMachineConfiguration<TMachineState, TMachineEvent>,

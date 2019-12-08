@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ExplicitlyStated.StateMachine.Impl
+namespace ExplicitlyStated.StateMachine.Dispatch
 {
     internal enum EnteredStateType
     {

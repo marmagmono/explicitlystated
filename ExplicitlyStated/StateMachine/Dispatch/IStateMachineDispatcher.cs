@@ -1,4 +1,4 @@
-﻿namespace ExplicitlyStated.StateMachine.Impl
+﻿namespace ExplicitlyStated.StateMachine.Dispatch
 {
     internal interface IStateMachineDispatcher<TMachineState, TMachineEvent>
     {
