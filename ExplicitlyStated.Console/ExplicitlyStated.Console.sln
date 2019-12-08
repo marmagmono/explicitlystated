@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplicitlyStated.Console", "ExplicitlyStated.Console.csproj", "{E01E3621-A6BD-474D-9335-420073EFDD1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExplicitlyStated.Console", "ExplicitlyStated.Console.csproj", "{E01E3621-A6BD-474D-9335-420073EFDD1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplicitlyStated", "..\ExplicitlyStated\ExplicitlyStated.csproj", "{10DA6173-E594-4DF6-8927-80C21F123A76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExplicitlyStated", "..\ExplicitlyStated\ExplicitlyStated.csproj", "{10DA6173-E594-4DF6-8927-80C21F123A76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplicitlyStated.Tests", "..\ExplicitlyStated.Tests\ExplicitlyStated.Tests.csproj", "{3F03635D-1737-4CA1-9B3F-6225AD20F529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{10DA6173-E594-4DF6-8927-80C21F123A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10DA6173-E594-4DF6-8927-80C21F123A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10DA6173-E594-4DF6-8927-80C21F123A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F03635D-1737-4CA1-9B3F-6225AD20F529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F03635D-1737-4CA1-9B3F-6225AD20F529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F03635D-1737-4CA1-9B3F-6225AD20F529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F03635D-1737-4CA1-9B3F-6225AD20F529}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

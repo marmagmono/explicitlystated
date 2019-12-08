@@ -19,6 +19,7 @@ namespace ExplicitlyStated.StateMachine.Impl
         private Task<TMachineEvent> currentOperation;
 
         public AsyncStateMachine(
+            TMachineState initialState,
             IStateMachineDispatcher<TMachineState, TMachineEvent> machineDispatcher,
             ISynchronizationQueueFactory synchronizationQueueFactory)
         {
@@ -27,6 +28,7 @@ namespace ExplicitlyStated.StateMachine.Impl
                 throw new ArgumentNullException(nameof(synchronizationQueueFactory));
             }
 
+            CurrentState = initialState;
             this.machineDispatcher = machineDispatcher ?? throw new ArgumentNullException(nameof(machineDispatcher));
             this.synchronizationQueue = synchronizationQueueFactory.Create<TMachineEvent>(ProcessImpl);
         }
