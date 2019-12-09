@@ -44,7 +44,7 @@ namespace ExplicitlyStated.StateMachine.Dispatch
 
         public void AddEntry(in SimpleDispatchEntry<TEntry> entry)
         {
-            ++currentEntryIdx;
+            this.currentEntryIdx += 1;
             if (currentEntryIdx >= this.dispatchEntries.Length)
             {
                 var oldEntries = this.dispatchEntries;

@@ -31,11 +31,14 @@ namespace ExplicitlyStated.StateMachine.Impl
             {
                 // Cleanup previous state
                 var previousState = CurrentState;
-                stateDispatcher.OnLeave(previousState);
+                if (previousState.GetType() != updatedState.GetType())
+                {
+                    stateDispatcher.OnLeave(previousState);
 
-                // Initialize new state
-                var newStateDispatcher = this.machineDispatcher.FindStateDispatcher(updatedState);
-                newStateDispatcher.OnEnter(updatedState, out var _);
+                    // Initialize new state
+                    var newStateDispatcher = this.machineDispatcher.FindStateDispatcher(updatedState);
+                    newStateDispatcher.OnEnter(updatedState, out var _);
+                }
 
                 // Change state
                 this.CurrentState = updatedState;

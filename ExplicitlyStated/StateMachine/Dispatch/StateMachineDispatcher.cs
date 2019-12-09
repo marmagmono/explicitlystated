@@ -7,7 +7,7 @@ namespace ExplicitlyStated.StateMachine.Dispatch
         : IStateMachineConfiguration<TMachineState, TMachineEvent>,
           IStateMachineDispatcher<TMachineState, TMachineEvent>
     {
-        private readonly SimpleDispatch<IStateDispatcher<TMachineState, TMachineEvent>> dispatch =
+        private SimpleDispatch<IStateDispatcher<TMachineState, TMachineEvent>> dispatch =
             new SimpleDispatch<IStateDispatcher<TMachineState, TMachineEvent>>(8);
 
         protected virtual void AddDispatcher(

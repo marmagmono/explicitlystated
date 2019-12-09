@@ -49,12 +49,16 @@ namespace ExplicitlyStated.StateMachine.Impl
             {
                 // Cleanup previous state
                 var previousState = CurrentState;
-                stateDispatcher.OnLeave(previousState);
 
-                // Initialize new state
-                var newStateDispatcher = this.machineDispatcher.FindStateDispatcher(updatedState);
-                var stateType = newStateDispatcher.OnEnter(updatedState, out var actionTask);
-                SetupStateState(stateType, actionTask, ref this.currentOperation, Process);
+                if (previousState.GetType() != updatedState.GetType())
+                {
+                    stateDispatcher.OnLeave(previousState);
+
+                    // Initialize new state
+                    var newStateDispatcher = this.machineDispatcher.FindStateDispatcher(updatedState);
+                    var stateType = newStateDispatcher.OnEnter(updatedState, out var actionTask);
+                    SetupStateState(stateType, actionTask, ref this.currentOperation, Process);
+                }
 
                 // Change state
                 this.CurrentState = updatedState;
