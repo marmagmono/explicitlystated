@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ExplicitlyStated.StateMachine;
+﻿using ExplicitlyStated.StateMachine;
 using Moq;
 using Xunit;
 
@@ -88,6 +86,23 @@ namespace ExplicitlyStated.Tests.StateMachine
             Assert.IsType<TestState>(this.sut.CurrentState);
             this.transitionsTester.Verify(m => m.OnLeaveInitial(It.IsAny<InitialState>()), Times.Once);
             this.transitionsTester.Verify(m => m.OnEnterTest(It.IsAny<TestState>()), Times.Once);
+        }
+
+        [Fact]
+        public void When_TransitionDetectionCompletedSuccess_Than_Does_NotTransition()
+        {
+            // Arrange
+            var seq = new MockSequence();
+            this.transitionsTester.InSequence(seq).Setup(m => m.OnLeaveInitial(It.IsAny<InitialState>()));
+            this.transitionsTester.InSequence(seq).Setup(m => m.OnEnterTest(It.IsAny<TestState>()));
+
+            // Act
+            bool transitioned = this.sut.Transition(new DetectionCompletedSuccess(), out var newState);
+
+            // Assert
+            Assert.False(transitioned);
+            Assert.IsType<InitialState>(this.sut.CurrentState);
+            this.transitionsTester.Verify(m => m.OnLeaveInitial(It.IsAny<InitialState>()), Times.Never);
         }
 
         [Fact]
