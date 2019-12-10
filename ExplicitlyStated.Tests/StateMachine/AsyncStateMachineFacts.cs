@@ -10,7 +10,7 @@ namespace ExplicitlyStated.Tests.StateMachine
 {
     public partial class AsyncStateMachineFacts
     {
-        private static readonly TimeSpan TimeoutDuration = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan TimeoutDuration = TimeSpan.FromSeconds(1000);
 
         private IStateMachine<StateBase, EventBase> sut;
 
@@ -137,7 +137,7 @@ namespace ExplicitlyStated.Tests.StateMachine
         }
 
         [Fact]
-        public async Task When_Transition_To_New_StateOfTheSameTypeButNotEqual_Than_OnEnterAndOnLeave_AreNotCalledButStateChangedIs()
+        public async Task When_Transition_To_New_StateOfTheSameTypeButNotEqual_Than_OnEnterAndOnLeaveAreNotCalled_ButStateChangedIs()
         {
             // Arrange
             var seq = new MockSequence();
@@ -157,6 +157,29 @@ namespace ExplicitlyStated.Tests.StateMachine
 
             this.transitionsTester.Verify(m => m.OnLeaveTest(It.IsAny<TestState>()), Times.Never);
             this.transitionsTester.Verify(m => m.OnEnterTest(It.IsAny<TestState>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task When_Transition_To_AsyncState_Than_RunAsyncIsCalled()
+        {
+            // Arrange
+            var detectTaskCompletionSource = new TaskCompletionSource<bool>();
+            this.detectionManager.Setup(m => m.Detect()).Returns(detectTaskCompletionSource.Task);
+
+            await DoStateChange(new TestCommand());
+
+            // Act
+            await DoStateChange(new StartDetectionCommand());
+
+            // Assert
+            this.detectionManager.Verify(m => m.Detect(), Times.Once);
+        }
+
+        private async Task DoStateChange(EventBase @event)
+        {
+            var transition = NextStateChanged().Timeout(TimeoutDuration);
+            this.sut.Process(@event);
+            await transition;
         }
 
         private Task<StateChangedEventArgs<StateBase>> NextStateChanged() =>
