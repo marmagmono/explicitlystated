@@ -8,7 +8,7 @@ using Xunit;
 
 namespace ExplicitlyStated.Tests.StateMachine
 {
-    public partial class AsyncStateMachineFacts
+    public class AsyncStateMachineFacts
     {
         private static readonly TimeSpan TimeoutDuration = TimeSpan.FromSeconds(1000);
 
@@ -131,10 +131,13 @@ namespace ExplicitlyStated.Tests.StateMachine
 
             // Act
             this.sut.Process(new TestCommand());
-            await transition;
+            var e = await transition;
 
             // Assert
             Assert.IsType<TestState>(this.sut.CurrentState);
+            Assert.IsType<TestState>(e.CurrentState);
+            Assert.IsType<InitialState>(e.PreviousState);
+
             this.transitionsTester.Verify(m => m.OnLeaveInitial(It.IsAny<InitialState>()), Times.Once);
             this.transitionsTester.Verify(m => m.OnEnterTest(It.IsAny<TestState>()), Times.Once);
         }
