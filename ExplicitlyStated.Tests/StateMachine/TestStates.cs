@@ -8,7 +8,7 @@ namespace ExplicitlyStated.Tests.StateMachine
 
     public class TestState : StateBase { }
 
-    internal class DetectingState : StateBase
+    public class DetectingState : StateBase
     {
         public bool WaitingCancellation { get; }
 

@@ -24,6 +24,8 @@ namespace ExplicitlyStated.Tests.StateMachine
             void OnEnterTest(TestState s);
 
             void OnLeaveTest(TestState s);
+
+            void OnLeaveDetecting(DetectingState s);
         }
 
         public interface IDetectionManager
@@ -92,7 +94,8 @@ namespace ExplicitlyStated.Tests.StateMachine
                 })
                 .Transition<DetectionCompletedSuccess>((s, e) => new DetectionSuccessState(s.DetectedDevices))
                 .Transition<DetectionCancelled>((s, e) => new InitialState())
-                .Transition<DetectionCompletedFailure>((s, e) => new DetectionFailedState());
+                .Transition<DetectionCompletedFailure>((s, e) => new DetectionFailedState())
+                .OnLeave(s => this.transitionsTester.Object.OnLeaveDetecting(s));
 
             configuration.ConfigureState<DetectionSuccessState>(2)
                 .Transition<StartDetectionCommand>((s, e) => new DetectingState(false, new List<Device>()))
@@ -173,6 +176,49 @@ namespace ExplicitlyStated.Tests.StateMachine
 
             // Assert
             this.detectionManager.Verify(m => m.Detect(), Times.Once);
+        }
+
+        [Fact]
+        public async Task When_InAsyncState_AndTransitionWithinTheSameState_Than_RunAsync_IsNotCalledAgain()
+        {
+            // Arrange
+            var detectTaskCompletionSource = new TaskCompletionSource<bool>();
+            this.detectionManager.Setup(m => m.Detect()).Returns(detectTaskCompletionSource.Task);
+
+            await DoStateChange(new TestCommand());
+            await DoStateChange(new StartDetectionCommand());
+
+            this.detectionManager.Reset();
+
+            // Act
+            await DoStateChange(new DeviceDetected(new Device()));
+
+            // Assert
+            this.detectionManager.Verify(m => m.Detect(), Times.Never);
+            this.transitionsTester.Verify(m => m.OnLeaveDetecting(It.IsAny<DetectingState>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task When_InAsyncState_AndAsyncOperationCompletes_Than_TransitionsToStateAssociatedWithActionResultEventIsCalled()
+        {
+            // Arrange
+            var detectTaskCompletionSource = new TaskCompletionSource<bool>();
+            this.detectionManager.Setup(m => m.Detect()).Returns(detectTaskCompletionSource.Task);
+
+            await DoStateChange(new TestCommand());
+            await DoStateChange(new StartDetectionCommand());
+
+            this.detectionManager.Reset();
+
+            // Act
+            var transition = NextStateChanged().Timeout(TimeoutDuration);
+            detectTaskCompletionSource.SetResult(true);
+
+            await transition;
+
+            // Assert
+            Assert.IsType<DetectionSuccessState>(this.sut.CurrentState);
+            this.transitionsTester.Verify(m => m.OnLeaveDetecting(It.IsAny<DetectingState>()), Times.Once);
         }
 
         private async Task DoStateChange(EventBase @event)
