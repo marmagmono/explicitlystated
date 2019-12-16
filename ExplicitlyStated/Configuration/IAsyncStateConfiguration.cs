@@ -11,6 +11,7 @@ namespace ExplicitlyStated.Configuration
         IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnLeave(Action<TSpecificState> onLeave);
 
         IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(
-            Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction);
+            Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction)
+            where TSpecificEvent : TMachineEvent;
     }
 }

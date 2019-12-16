@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ExplicitlyStated.StateMachine.Dispatch;
+using ExplicitlyStated.EventStateMachine.Dispatch;
+using ExplicitlyStated.StateMachine;
 using ExplicitlyStated.StateMachine.Synchronization;
 using ExplicitlyStated.Utilities;
 
-namespace ExplicitlyStated.StateMachine.Impl
+namespace ExplicitlyStated.EventStateMachine.Impl
 {
-    internal class AsyncStateMachine<TMachineState, TMachineEvent> : IStateMachine<TMachineState, TMachineEvent>
+    internal class EventStateMachine<TMachineState, TMachineEvent, TGeneratedEvent>
+        : IEventStateMachine<TMachineState, TMachineEvent, TGeneratedEvent>
     {
         private static readonly Task<TMachineEvent> CompletedActionTask = Task.FromResult(default(TMachineEvent));
 
-        private readonly IStateMachineDispatcher<TMachineState, TMachineEvent> machineDispatcher;
+        private readonly IStateMachineDispatcher<TMachineState, TMachineEvent, TGeneratedEvent> machineDispatcher;
         private readonly ISynchronizationQueue<TMachineEvent> synchronizationQueue;
 
-        /// <summary>
-        /// Currently running operation if current state is async state. Completed task otherwise.
-        /// </summary>
         private Task<TMachineEvent> currentOperation;
 
-        public AsyncStateMachine(
+        public EventStateMachine(
             TMachineState initialState,
-            IStateMachineDispatcher<TMachineState, TMachineEvent> machineDispatcher,
+            IStateMachineDispatcher<TMachineState, TMachineEvent, TGeneratedEvent> machineDispatcher,
             ISynchronizationQueueFactory synchronizationQueueFactory)
         {
             if (synchronizationQueueFactory is null)
@@ -36,16 +35,20 @@ namespace ExplicitlyStated.StateMachine.Impl
         public TMachineState CurrentState { get; private set; }
 
         public event EventHandler<StateChangedEventArgs<TMachineState>> StateChanged;
+        public event EventHandler<EventGeneratedEventArgs<TGeneratedEvent>> EventGenerated;
 
         public void Process(TMachineEvent ev) => this.synchronizationQueue.AddEvent(ev);
 
         private void ProcessImpl(TMachineEvent ev)
         {
             var stateDispatcher = this.machineDispatcher.FindStateDispatcher(CurrentState);
-            if (stateDispatcher.TryTransition(CurrentState, ev, out var updatedState))
+            var transition = stateDispatcher.Transition(CurrentState, ev);
+
+            if (transition.TransitionType == TransitionEnum.Transitioned)
             {
                 // Cleanup previous state
                 var previousState = CurrentState;
+                var updatedState = transition.NewState;
 
                 if (previousState.GetType() != updatedState.GetType())
                 {
@@ -65,12 +68,18 @@ namespace ExplicitlyStated.StateMachine.Impl
                 // Change state
                 this.CurrentState = updatedState;
                 NotifyStateChanged(CurrentState, previousState);
+
+                if (transition.GeneratedEvent != default)
+                {
+                    NotifyEventGenerated(transition.GeneratedEvent);
+                }
             }
         }
 
-        
-
         private void NotifyStateChanged(TMachineState newState, TMachineState previousState) =>
             StateChanged?.Invoke(this, new StateChangedEventArgs<TMachineState>(newState, previousState));
+
+        private void NotifyEventGenerated(TGeneratedEvent e) =>
+            EventGenerated.Invoke(this, new EventGeneratedEventArgs<TGeneratedEvent>(e));
     }
 }

@@ -10,6 +10,7 @@ namespace ExplicitlyStated.Configuration
         IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> OnLeave(Action<TSpecificState> onLeave);
 
         IStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(
-            Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction);
+            Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction)
+            where TSpecificEvent : TMachineEvent;
     }
 }
