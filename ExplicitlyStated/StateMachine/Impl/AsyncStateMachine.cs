@@ -68,8 +68,6 @@ namespace ExplicitlyStated.StateMachine.Impl
             }
         }
 
-        
-
         private void NotifyStateChanged(TMachineState newState, TMachineState previousState) =>
             StateChanged?.Invoke(this, new StateChangedEventArgs<TMachineState>(newState, previousState));
     }
