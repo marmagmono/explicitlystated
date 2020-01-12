@@ -67,12 +67,13 @@ namespace ExplicitlyStated.EventStateMachine.Impl
 
                 // Change state
                 this.CurrentState = updatedState;
-                NotifyStateChanged(CurrentState, previousState);
 
                 if (transition.GeneratedEvent != default)
                 {
                     NotifyEventGenerated(transition.GeneratedEvent);
                 }
+
+                NotifyStateChanged(CurrentState, previousState);
             }
         }
 
@@ -80,6 +81,6 @@ namespace ExplicitlyStated.EventStateMachine.Impl
             StateChanged?.Invoke(this, new StateChangedEventArgs<TMachineState>(newState, previousState));
 
         private void NotifyEventGenerated(TGeneratedEvent e) =>
-            EventGenerated.Invoke(this, new EventGeneratedEventArgs<TGeneratedEvent>(e));
+            EventGenerated?.Invoke(this, new EventGeneratedEventArgs<TGeneratedEvent>(e));
     }
 }

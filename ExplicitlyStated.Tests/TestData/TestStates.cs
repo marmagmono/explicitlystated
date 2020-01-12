@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExplicitlyStated.Tests.StateMachine
+namespace ExplicitlyStated.Tests.Data
 {
     public abstract class StateBase { }
 

@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExplicitlyStated.Tests.StateMachine
+﻿namespace ExplicitlyStated.Tests.Data
 {
-    internal class EventBase { }
+    public class EventBase { }
 
     internal class TestCommand : EventBase { }
+
+    internal class TransitionEventCommand : EventBase
+    {
+        public bool GenerateEvent { get; }
+
+        public TransitionEventCommand(bool generateEvent)
+        {
+            GenerateEvent = generateEvent;
+        }
+    }
 
     internal class StartDetectionCommand : EventBase { }
 

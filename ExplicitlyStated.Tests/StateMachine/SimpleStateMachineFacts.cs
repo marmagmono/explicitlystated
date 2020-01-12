@@ -1,4 +1,5 @@
 ﻿using ExplicitlyStated.StateMachine;
+using ExplicitlyStated.Tests.Data;
 using Moq;
 using Xunit;
 

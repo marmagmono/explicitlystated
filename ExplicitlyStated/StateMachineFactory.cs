@@ -1,6 +1,7 @@
 ﻿using System;
 using ExplicitlyStated.Configuration;
 using ExplicitlyStated.EventStateMachine;
+using ExplicitlyStated.EventStateMachine.Configuration;
 using ExplicitlyStated.EventStateMachine.Impl;
 using ExplicitlyStated.StateMachine;
 using ExplicitlyStated.StateMachine.Dispatch;
@@ -40,7 +41,7 @@ namespace ExplicitlyStated
 
         public static IEventStateMachine<TMachineState, TMachineEvent, TGeneratedEvent> CreateEvent<TMachineState, TMachineEvent, TGeneratedEvent>(
             TMachineState initialState,
-            IAsyncStateMachineConfiguration<TMachineState, TMachineEvent> configuration)
+            IStateMachineConfiguration<TMachineState, TMachineEvent, TGeneratedEvent> configuration)
         {
             if (configuration is EventStateMachine.Dispatch.StateMachineDispatcher<TMachineState, TMachineEvent, TGeneratedEvent> dispatcher)
             {
