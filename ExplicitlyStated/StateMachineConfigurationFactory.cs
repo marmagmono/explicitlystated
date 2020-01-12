@@ -10,5 +10,8 @@ namespace ExplicitlyStated
 
         public static IStateMachineConfiguration<TMachineState, TMachineEvent> Create<TMachineState, TMachineEvent>() =>
             new StateMachineDispatcher<TMachineState, TMachineEvent>();
+
+        public static EventStateMachine.Configuration.IStateMachineConfiguration<TMachineState, TMachineEvent, TGeneratedEvent> CreateEvent<TMachineState, TMachineEvent, TGeneratedEvent>() =>
+            new EventStateMachine.Dispatch.StateMachineDispatcher<TMachineState, TMachineEvent, TGeneratedEvent>();
     }
 }

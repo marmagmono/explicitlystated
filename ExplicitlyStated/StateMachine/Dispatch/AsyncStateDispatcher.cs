@@ -27,18 +27,14 @@ namespace ExplicitlyStated.StateMachine.Dispatch
         }
 
         public IAsyncStateConfiguration<TSpecificState, TMachineState, TMachineEvent> Transition<TSpecificEvent>(Func<TSpecificState, TSpecificEvent, TMachineState> transitionFunction)
+            where TSpecificEvent : TMachineEvent
         {
             this.dispatch.AddEntry(new SimpleDispatchEntry<TransitionFunction>(
                 typeof(TSpecificEvent),
                 (TMachineState s, TMachineEvent e) =>
                 {
-                    if (e is TSpecificEvent se)
-                    {
-                        var specificState = (TSpecificState)s;
-                        return transitionFunction(specificState, se);
-                    }
-
-                    return default;
+                    var specificState = (TSpecificState)s;
+                    return transitionFunction(specificState, (TSpecificEvent)e);
                 }));
 
             return this;
